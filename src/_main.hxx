@@ -1,5 +1,4 @@
 #pragma once
-#define BUILD 5  // 5 == BUILD_TRACE
 #include "_debug.hxx"
 #include "_algorithm.hxx"
 #include "_cmath.hxx"

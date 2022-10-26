@@ -497,13 +497,24 @@ void multiplyValueCuW(T *a, const T *x, T v, size_t N) {
 // MAX
 // ---
 
-template <class T>
+template <bool POW2=false, class T>
 __device__ void maxKernelReduceU(T* a, size_t N, size_t i) {
   ASSERT(a);
-  __syncthreads();
-  for (N=N/2; N>0; N/=2) {
-    if (i<N) a[i] = max(a[i], a[N+i]);
+  if (POW2) {
     __syncthreads();
+    for (N=N/2; N>0; N/=2) {
+      if (i<N) a[i] = max(a[i], a[N+i]);
+      __syncthreads();
+    }
+  }
+  else {
+    __syncthreads();
+    for (; N>1;) {
+      size_t DN = (N+1)/2;
+      if (i<N/2 && a[i]<a[DN+i]) a[i] = a[DN+i];
+      __syncthreads();
+      N = DN;
+    }
   }
 }
 
@@ -516,37 +527,37 @@ __device__ T maxKernelLoop(const T *x, size_t N, size_t i, size_t DI) {
   return a;
 }
 
-template <class T, int S=BLOCK_LIMIT_REDUCE>
+template <bool POW2=false, class T, int S=BLOCK_LIMIT_REDUCE>
 __global__ void maxKernelW(T *a, const T *x, size_t N) {
   DEFINE(t, b, B, G);
   ASSERT(a && x);
   __shared__ T cache[S];
   cache[t] = maxKernelLoop(x, N, B*b+t, G*B);
-  maxKernelReduceU(cache, B, t);
+  maxKernelReduceU<POW2>(cache, B, t);
   if (t==0) a[b] = cache[0];
 }
 
-template <class T>
+template <bool POW2=false, class T>
 void maxMemcpyCuW(T *a, const T *x, size_t N) {
   ASSERT(a && x);
   const int B = BLOCK_SIZE(N,  BLOCK_LIMIT_REDUCE);
   const int G = GRID_SIZE(N, B, GRID_LIMIT_REDUCE);
-  maxKernelW<<<G, B>>>(a, x, N);
+  maxKernelW<POW2><<<G, B>>>(a, x, N);
   ASSERT_KERNEL();
 }
 
-template <class T>
+template <bool POW2=false, class T>
 void maxInplaceCuW(T *a, const T *x, size_t N) {
   ASSERT(a && x);
   const int B = BLOCK_SIZE(N,  BLOCK_LIMIT_REDUCE);
   const int G = GRID_SIZE(N, B, GRID_LIMIT_REDUCE);
-  maxKernelW<<<G, B>>>(a, x, N);
+  maxKernelW<POW2><<<G, B>>>(a, x, N);
   ASSERT_KERNEL();
-  maxKernelW<<<1, G>>>(a, a, G);
+  maxKernelW<POW2><<<1, G>>>(a, a, G);
   ASSERT_KERNEL();
 }
 
-template <class T>
+template <bool POW2=false, class T>
 void maxCuW(T *a, const T *x, size_t N) {
   ASSERT(a && x);
   maxMemcpyCuW(a, x, N);

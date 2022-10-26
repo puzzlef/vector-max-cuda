@@ -25,8 +25,13 @@
 // ------
 
 #ifndef ASSERT
+#if !defined(NDEBUG) && defined(BUILD) && BUILD>=BUILD_ERROR
 #define ASSERT(exp)           assert(exp)
 #define ASSERT_THAT(exp, msg) assert((exp) && (msg))
+#else
+#define ASSERT(exp)
+#define ASSERT_THAT(exp, msg)
+#endif
 #endif
 
 

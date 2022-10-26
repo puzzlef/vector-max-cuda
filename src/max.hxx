@@ -1,22 +1,21 @@
 #pragma once
-#include "_main.hxx"
 
 
 
 
-struct SumOptions {
+struct MaxOptions {
   int repeat;
 
-  SumOptions(int repeat=1) :
+  MaxOptions(int repeat=1) :
   repeat(repeat) {}
 };
 
 
 template <class T>
-struct SumResult {
+struct MaxResult {
   T     result;
   float time;
 
-  SumResult(T result, float time) :
+  MaxResult(T result, float time) :
   result(result), time(time) {}
 };
