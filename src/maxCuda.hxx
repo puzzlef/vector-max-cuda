@@ -24,12 +24,16 @@ MaxResult<T> maxCuda(const T *x, int N, const MaxOptions& o={}) {
   TRY( cudaHostAlloc(&r, RT1, cudaHostAllocDefault) );
   TRY( cudaMalloc(&rD, RT1) );
   TRY( cudaMalloc(&xD, NT1) );
-  TRY( cudaMemcpy(xD, x.data(), NT1, cudaMemcpyHostToDevice) );
+  TRY( cudaMemcpy(xD, x, NT1, cudaMemcpyHostToDevice) );
   float t = measureDuration([&] {
     maxCuW<POW2>(rD, xD, N);
     TRY( cudaMemcpy(r, rD, RT1, cudaMemcpyDeviceToHost) );
     a = maxValue(r, RN);
   }, o.repeat);
+  TRY( cudaFreeHost(r) );
+  TRY( cudaFree(rD) );
+  TRY( cudaFree(xD) );
+  // TRY( cudaProfilerStart() );
   return {a, t};
 }
 
