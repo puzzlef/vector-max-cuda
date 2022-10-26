@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-src="sum-sequential-vs-cuda"
+src="max-sequential-vs-cuda"
 out="/home/resources/Documents/subhajit/$src.log"
 ulimit -s unlimited
 printf "" > "$out"
@@ -10,5 +10,5 @@ git clone https://github.com/puzzlef/$src
 cd $src
 
 # Run
-g++ -O3 -fopenmp main.cxx
+nvcc -std=c++17 -Xcompiler -O3 main.cu
 stdbuf --output=L ./a.out 2>&1 | tee -a "$out"

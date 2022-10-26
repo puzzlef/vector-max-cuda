@@ -33,7 +33,7 @@ MaxResult<T> maxCuda(const T *x, int N, const MaxOptions& o={}) {
   return {a, t};
 }
 
-template <class T>
+template <bool POW2=false, class T>
 MaxResult<T> maxCuda(const vector<T>& x, const MaxOptions& o={}) {
-  return maxCuda(x.data(), x.size(), o);
+  return maxCuda<POW2>(x.data(), x.size(), o);
 }
