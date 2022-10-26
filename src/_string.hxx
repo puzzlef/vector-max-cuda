@@ -1,5 +1,6 @@
 #pragma once
 #include <string>
+#include "_debug.hxx"
 
 using std::string;
 
@@ -10,15 +11,15 @@ using std::string;
 // -----------
 // For counting temporal edges.
 
-int countLines(const char *x) {
-  int a = 1;
+size_t countLines(const char* x) {
+  ASSERT(x);
+  size_t a = 1;
   for (; *x; x++) {
-    if (*x == '\r' || *x == '\n') a++;
-    else if (*x == '\r' && *(x+1) == '\n') x++;
+    if (*x == '\r' || *x == '\n') ++a;
+    else if (*x == '\r' && *(x+1) == '\n') ++x;
   }
   return a;
 }
-
-int countLines(const string& x) {
+inline size_t countLines(const string& x) {
   return countLines(x.c_str());
 }

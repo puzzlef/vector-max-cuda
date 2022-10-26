@@ -1,19 +1,23 @@
 #pragma once
+#include <type_traits>
 #include <utility>
+#include <iterator>
+#include <array>
 #include <string>
 #include <vector>
 #include <ostream>
 #include <fstream>
 #include <iostream>
-#include <type_traits>
 
 using std::pair;
+using std::array;
 using std::string;
 using std::vector;
 using std::ios;
 using std::ostream;
 using std::ifstream;
 using std::is_fundamental;
+using std::iterator_traits;
 using std::cout;
 
 
@@ -22,7 +26,7 @@ using std::cout;
 // READ-FILE
 // ---------
 
-string readFile(const char *pth) {
+string readFileText(const char *pth) {
   string a; ifstream f(pth);
   f.seekg(0, ios::end);
   a.resize(f.tellg());
@@ -37,27 +41,51 @@ string readFile(const char *pth) {
 // WRITE
 // -----
 
-template <class K, class V>
-ostream& operator<<(ostream& a, const pair<K, V>& x) {
-  a << x.first << ": " << x.second;
-  return a;
-}
-
-template <class T>
-ostream& operator<<(ostream& a, const vector<T>& x) {
+template <class I>
+void write_values(ostream& a, I ib, I ie) {
+  using T = typename iterator_traits<I>::value_type;
   if (is_fundamental<T>::value) {
     a << "{";
-    for (T v : x)
-      a << " " << v;
+    for (; ib < ie; ++ib)
+      a << " " << *ib;
     a << " }";
   }
   else {
     a << "{\n";
-    for (const T& v : x)
-      a << "  " << v << "\n";
+    for (; ib < ie; ++ib)
+      a << "  " << *ib << "\n";
     a << "}";
   }
-  return a;
+}
+template <class J>
+inline void writeValues(ostream& a, const J& x) {
+  write_values(a, x.begin(), x.end());
+}
+
+template <class K, class V>
+inline void write(ostream& a, const pair<K, V>& x) {
+  a << x.first << ": " << x.second;
+}
+template <class T, size_t N>
+inline void write(ostream& a, const array<T, N>& x) {
+  writeValues(a, x);
+}
+template <class T>
+inline void write(ostream& a, const vector<T>& x) {
+  writeValues(a, x);
+}
+
+template <class K, class V>
+inline ostream& operator<<(ostream& a, const pair<K, V>& x) {
+  write(a, x); return a;
+}
+template <class T, size_t N>
+inline ostream& operator<<(ostream& a, const array<T, N>& x) {
+  write(a, x); return a;
+}
+template <class T>
+inline ostream& operator<<(ostream& a, const vector<T>& x) {
+  write(a, x); return a;
 }
 
 
@@ -67,7 +95,7 @@ ostream& operator<<(ostream& a, const vector<T>& x) {
 // ------
 
 template <class T>
-void print(const T& x) {cout << x; }
-
+inline void print(const T& x)   { cout << x; }
 template <class T>
-void println(const T& x) { cout << x << "\n"; }
+inline void println(const T& x) { cout << x << "\n"; }
+inline void println()           { cout << "\n"; }

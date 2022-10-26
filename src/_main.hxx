@@ -1,4 +1,6 @@
 #pragma once
+#define BUILD 5  // 5 == BUILD_TRACE
+#include "_debug.hxx"
 #include "_algorithm.hxx"
 #include "_cmath.hxx"
 #include "_ctypes.hxx"
@@ -8,3 +10,6 @@
 #include "_string.hxx"
 #include "_utility.hxx"
 #include "_vector.hxx"
+#include "_queue.hxx"
+#include "_bitset.hxx"
+#include "_cuda.hxx"

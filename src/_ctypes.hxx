@@ -21,10 +21,14 @@ struct None {
   template <class T>
   friend bool operator==(const T& l, None r) noexcept { return false; }
 
-
   // Stream operators.
   friend istream& operator>>(istream& a, None& x) noexcept { return a; }
   friend ostream& operator<<(ostream& a, None x)  noexcept { return a; }
+
+  // Lifetime operators.
+  explicit None() {}
+  template <class T>
+  explicit None(T _) {}
 };
 #define NONE None
 #endif
