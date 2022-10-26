@@ -1,7 +1,7 @@
-# https://www.kaggle.com/wolfram77/puzzlef-sum-sequential-vs-openmp
+# https://www.kaggle.com/wolfram77/puzzlef-sum-sequential-vs-cuda
 import os
 from IPython.display import FileLink
-src="sum-sequential-vs-openmp"
+src="sum-sequential-vs-cuda"
 out="{}.txt".format(src)
 !printf "" > "$out"
 display(FileLink(out))
