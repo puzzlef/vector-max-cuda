@@ -560,7 +560,7 @@ void maxInplaceCuW(T *a, const T *x, size_t N) {
 template <bool POW2=false, class T>
 void maxCuW(T *a, const T *x, size_t N) {
   ASSERT(a && x);
-  maxMemcpyCuW(a, x, N);
+  maxMemcpyCuW<POW2>(a, x, N);
 }
 
 
