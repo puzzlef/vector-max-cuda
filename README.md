@@ -1,37 +1,31 @@
-Performance of *sequential* vs *CUDA-based* **vector element max**.
+Comparing performance of *sequential* vs *CUDA-based* **vector element max**.
 
-This experiment was for comparing the performance between:
-1. Find `max(x)` using a single thread (**sequential**).
-2. Find `max(x)` accelerated using **CUDA** (*not power-of-2* reduce).
-3. Find `max(x)` accelerated using **CUDA** (*power-of-2* reduce).
-
-Here `x` is a 32-bit integer vector. Both approaches were attempted on a number
-of vector sizes, running each approach 5 times per size to get a good time
-measure. Note that time taken to copy data back and forth from the GPU is not
-measured, and the sequential approach does not make use of *SIMD instructions*.
-While it might seem that **CUDA** approach would be a clear winner, the results
-indicate it is dependent upon the workload. Results indicate that **from 10^5**
-**elements, CUDA approach performs better** than sequential. Both CUDA approaches
-(*not power-of-2*/*power-of-2* reduce) seem to have similar performance.
-
-All outputs are saved in a [gist] and a small part of the output is listed here.
-Some [charts] are also included below, generated from [sheets]. This experiment
-was done with guidance from [Prof. Kishore Kothapalli] and
+For each experiment given below, we attempt each approach on a number of vector
+sizes, running each approach 5 times per size to get a good time measure. Note
+that time taken to copy data back and forth from the GPU is not measured, and
+the sequential approach does not make use of *SIMD instructions*. The experiments
+are done with guidance from [Prof. Kishore Kothapalli] and
 [Prof. Dip Sankar Banerjee].
 
 <br>
 
-```bash
-$ nvcc -std=c++17 -Xcompiler -O3 main.cu
-$ ./a.out
 
-# [00000.001 ms; 1e+03 elems.] [999802] maxSeq
-# [00000.543 ms; 1e+03 elems.] [999802] maxCuda
-# [00000.018 ms; 1e+03 elems.] [999802] maxCudaPow2
-# ...
-```
+### Comparison with Sequential approach
+
+This experiment ([compare-sequential], [main]) compares the performance
+between finding `max(x)` using a single thread (**sequential**) and using
+**CUDA** (*not power-of-2* and *power-of-2* reduce). Here `x` is a 32-bit
+integer vector. While it might seem that **CUDA** approach would be a clear
+winner, the results indicate it is dependent upon the workload. Results indicate
+that **from 10^5 elements, CUDA approach performs better** than sequential.
+Both CUDA approaches (*not power-of-2*/*power-of-2* reduce) seem to have
+similar performance. All outputs are saved in a [gist]. Some [charts] are also
+included below, generated from [sheets].
 
 [![](https://i.imgur.com/Xm9M2wx.png)][sheetp]
+
+[compare-sequential]: https://github.com/puzzlef/vector-max-cuda/tree/compare-sequential
+[main]: https://github.com/puzzlef/vector-max-cuda
 
 <br>
 <br>
@@ -51,6 +45,7 @@ $ ./a.out
 
 <br>
 <br>
+
 
 [![](https://i.imgur.com/MOJPoM0.jpg)](https://www.youtube.com/watch?v=E0_Ic1P-Hzg)<br>
 [![ORG](https://img.shields.io/badge/org-puzzlef-green?logo=Org)](https://puzzlef.github.io)
